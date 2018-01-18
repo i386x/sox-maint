@@ -1,0 +1,57 @@
+#
+#! \file    ./Maintfile
+#! \author  Jiří Kučera, <jkucera AT redhat.com>
+#! \stamp   2018-01-09 16:54:54 (UTC+01:00, DST+00:00)
+#! \project SoX (Sound eXchange library) maintenance
+#! \license MIT (see ./LICENSE)
+#! \version See ./VERSION
+#! \fdesc   Project maintenance script.
+#
+
+# Project variables:
+setvar PROJECT 'SoX (Sound eXchange library) maintenance'
+setvar AUTHOR_NAME 'Jiří Kučera'
+setvar AUTHOR_EMAIL 'jkucera AT redhat.com'
+setvar LICENSE 'MIT'
+setvar VERSION '0.0.0'
+
+setvar PKG_NAME 'sox'
+
+template UPSTREAM_URL ''
+
+# Projec files:
+addfile license : LICENSE
+addfile version : VERSION
+addfile : .gitignore README.md
+addfile sources : Maintfile
+
+# Project maintaining tasks:
+missing() {
+  add_license LICENSE && \
+  add_readme  README.md && \
+  add_version VERSION && \
+  for_files sources edit_source
+}
+
+target get_sources
+
+pickup() {
+  unpack_source "$@"
+}
+autocomplete_tarballs pickup
+
+dsprep() {
+  ds_prep "$@"
+}
+autocomplete_downstreams dsprep
+
+# Private functions:
+function edit_source() {
+  local T
+
+  update_header "$1" project "${ProjectVars[PROJECT]}" && \
+  T=$(see_license "${ProjectVars[LICENSE]}" "${ProjectFiles[license]}") && \
+  update_header "$1" license "$T" && \
+  T=$(see_file "${ProjectFiles[version]}") && \
+  update_header "$1" version "$T"
+}
