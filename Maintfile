@@ -17,6 +17,7 @@ setvar VERSION '0.0.0'
 
 setvar PKG_NAME 'sox'
 setvar PKG_VERSION '14.4.2'
+setvar DOWNSTREAM_REPO 'https://github.com/i386x/sox-downstream'
 
 # Projec files:
 addfile license : LICENSE
@@ -38,6 +39,8 @@ tg_default() {
   echo '    copy ./tools/soxdbg.h to downstream directory'
   echo '  dsprep unpacked_tarball_directory_name downstream_directory_name'
   echo '    initialize downstream directory'
+  echo '  get_repos'
+  echo '    get downstream and package repos'
   echo '  get_sources'
   echo '    download source tarball from the location given by spec file and'
   echo '    cache it'
@@ -67,6 +70,12 @@ tg_missing() {
   add_version VERSION && \
   for_files sources edit_source
 }
+
+##
+# get_repos
+#
+# Get downstream and package repos.
+target get_repos
 
 ##
 # get_sources
