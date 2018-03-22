@@ -1,0 +1,2 @@
+pickup -d ./.pk-maint/sourcecache -P *.bz2\ *.gz\ *.tgz\ *.xz
+dsprep -d ./downstream -d
