@@ -16,36 +16,126 @@ setvar LICENSE 'MIT'
 setvar VERSION '0.0.0'
 
 setvar PKG_NAME 'sox'
-
-template UPSTREAM_URL ''
+setvar PKG_VERSION '14.4.2'
 
 # Projec files:
 addfile license : LICENSE
 addfile version : VERSION
 addfile : .gitignore README.md
 addfile sources : Maintfile
+addfile tools sources : tools/soxdbg/soxdbg.h
 
-# Project maintaining tasks:
-missing() {
+###############################################################################
+# Project maintaining tasks (targets)
+###############################################################################
+
+##
+# Print usage as default.
+tg_default() {
+  echo 'Maintfile targets:'
+  echo ''
+  echo '  cpsoxdbg'
+  echo '    copy ./tools/soxdbg.h to downstream directory'
+  echo '  dsprep unpacked_tarball_directory_name downstream_directory_name'
+  echo '    initialize downstream directory'
+  echo '  get_sources'
+  echo '    download source tarball from the location given by spec file and'
+  echo '    cache it'
+  echo '  lint'
+  echo '    collect spec and rpm files and run rpmlint on them'
+  echo '  missing'
+  echo '    add missing files to the project root (LICENSE, README.md, and'
+  echo '    VERSION) and update headers of source files (\project, \license,'
+  echo '    and \version)'
+  echo '  mkpatch from name [to]'
+  echo '    make a patch {PKG_NAME}-{PKG_VERSION}-<name>.patch from the diff'
+  echo '    between <from> and <to>; if <to> is omitted, master is used'
+  echo '  pickup tarball'
+  echo '    unpack <tarball> to downstream directory; do not overwrite the'
+  echo '    existing one'
+  echo ''
+}
+
+##
+# missing
+#
+# Add missing files to the project root (LICENSE, README.md, and VERSION) and
+# update headers of source files (\project, \license, and \version).
+tg_missing() {
   add_license LICENSE && \
   add_readme  README.md && \
   add_version VERSION && \
   for_files sources edit_source
 }
 
+##
+# get_sources
+#
+# Download source tarball from the location given by spec file and cache it.
 target get_sources
 
-pickup() {
+##
+# pickup $1
+#
+#   $1 - source tarball
+#
+# Unpack selected cached source tarball to downstream directory. Do not
+# overwrite the existing one.
+tg_pickup() {
   unpack_source "$@"
 }
-autocomplete_tarballs pickup
 
-dsprep() {
+##
+# dsprep $1 $2
+#
+#   $1 - directory name with unpacked tarball content
+#   $2 - downstream directory name
+#
+# Initialize downstream directory.
+tg_dsprep() {
   ds_prep "$@"
 }
-autocomplete_downstreams dsprep
 
-# Private functions:
+##
+# mkpatch $1 $2 [$3]
+#
+#   $1 - from (commit)
+#   $2 - patch name
+#   $3 - to (commit, master is default)
+#
+# Make a patch {PKG_NAME}-{PKG_VERSION}-$2.patch from the diff between $1 and
+# $3.
+tg_mkpatch() {
+  make_patch "$@"
+}
+
+##
+# lint
+#
+# Run rpmlint on existing spec files and rpm files.
+tg_lint() {
+  rpm_lint
+}
+
+##
+# cpsoxdbg
+#
+# Copy ./tools/soxdbg.h to downstream.
+tg_cpsoxdbg() {
+  cp "$PKM_PRJROOT/tools/soxdbg/soxdbg.h" \
+     "$PKM_PRJROOT/downstream/${ProjectVars[PKG_NAME]}-downstream/src/soxdbg.h"
+}
+
+###############################################################################
+# Private functions
+###############################################################################
+
+##
+# edit_source $1
+#
+#   $1 - source file
+#
+# Update \project, \license, and \version fields in $1's header.
 function edit_source() {
   local T
 
