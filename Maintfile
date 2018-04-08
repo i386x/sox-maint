@@ -40,7 +40,7 @@ tg_default() {
   echo '  dsprep unpacked_tarball_directory_name downstream_directory_name'
   echo '    initialize downstream directory'
   echo '  get_repos'
-  echo '    get downstream and package repos'
+  echo '    get upstream, downstream and package repos'
   echo '  get_sources'
   echo '    download source tarball from the location given by spec file and'
   echo '    cache it'
@@ -69,7 +69,7 @@ target missing
 ##
 # get_repos
 #
-# Get downstream and package repos.
+# Get upstream, downstream and package repos.
 target get_repos
 
 ##
