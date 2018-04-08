@@ -64,12 +64,7 @@ tg_default() {
 #
 # Add missing files to the project root (LICENSE, README.md, and VERSION) and
 # update headers of source files (\project, \license, and \version).
-tg_missing() {
-  add_license LICENSE && \
-  add_readme  README.md && \
-  add_version VERSION && \
-  for_files sources edit_source
-}
+target missing
 
 ##
 # get_repos
@@ -133,24 +128,4 @@ tg_lint() {
 tg_cpsoxdbg() {
   cp "$PKM_PRJROOT/tools/soxdbg/soxdbg.h" \
      "$PKM_PRJROOT/downstream/${ProjectVars[PKG_NAME]}-downstream/src/soxdbg.h"
-}
-
-###############################################################################
-# Private functions
-###############################################################################
-
-##
-# edit_source $1
-#
-#   $1 - source file
-#
-# Update \project, \license, and \version fields in $1's header.
-function edit_source() {
-  local T
-
-  update_header "$1" project "${ProjectVars[PROJECT]}" && \
-  T=$(see_license "${ProjectVars[LICENSE]}" "${ProjectFiles[license]}") && \
-  update_header "$1" license "$T" && \
-  T=$(see_file "${ProjectFiles[version]}") && \
-  update_header "$1" version "$T"
 }
